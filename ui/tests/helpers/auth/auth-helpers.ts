@@ -9,7 +9,9 @@ import { AUTH_FORM } from 'vault/tests/helpers/auth/auth-form-selectors';
 import { GENERAL } from 'vault/tests/helpers/general-selectors';
 import { Server } from 'miragejs';
 
-const { rootToken } = VAULT_KEYS;
+import type { LoginFields } from 'vault/vault/auth/form';
+
+export const { rootToken } = VAULT_KEYS;
 
 // LOGOUT
 export const logout = async () => {
@@ -24,7 +26,9 @@ export const logout = async () => {
 export const login = async (token = rootToken) => {
   // make sure we're always logged out and logged back in
   await logout();
-  await visit('/vault/auth?with=token');
+  await visit('/vault/auth');
+
+  await fillIn(AUTH_FORM.selectMethod, 'token');
   await fillIn(GENERAL.inputByAttr('token'), token);
   return click(AUTH_FORM.login);
 };
@@ -32,40 +36,37 @@ export const login = async (token = rootToken) => {
 export const loginNs = async (ns: string, token = rootToken) => {
   // make sure we're always logged out and logged back in
   await logout();
-  await visit('/vault/auth?with=token');
+  await visit('/vault/auth');
+
   await fillIn(GENERAL.inputByAttr('namespace'), ns);
+
+  await fillIn(AUTH_FORM.selectMethod, 'token');
   await fillIn(GENERAL.inputByAttr('token'), token);
   return click(AUTH_FORM.login);
 };
 
-// LOGIN WITH NON-TOKEN methods
-interface LoginFields {
-  username?: string;
-  password?: string;
-  token?: string;
-  role?: string;
-  path: string;
-  namespace: string;
-}
-
-interface LoginOptions {
-  authType?: string;
-  toggleOptions?: boolean;
-}
-export const loginMethod = async (loginFields: LoginFields, options: LoginOptions) => {
+// LOGIN WITH NON-TOKEN METHODS
+export const loginMethod = async (
+  loginFields: LoginFields,
+  options: { authType?: string; toggleOptions?: boolean }
+) => {
   // make sure we're always logged out and logged back in
   await logout();
-  await visit(`/vault/auth?with=${options.authType}`);
+  const type = options?.authType || 'token';
+
+  await fillIn(AUTH_FORM.selectMethod, type);
 
   await fillInLoginFields(loginFields, options);
   return click(AUTH_FORM.login);
 };
 
 export const fillInLoginFields = async (loginFields: LoginFields, { toggleOptions = false } = {}) => {
-  if (toggleOptions) await click(AUTH_FORM.moreOptions);
+  if (toggleOptions) await click(AUTH_FORM.advancedSettings);
 
   for (const [input, value] of Object.entries(loginFields)) {
-    await fillIn(GENERAL.inputByAttr(input), value);
+    if (value) {
+      await fillIn(GENERAL.inputByAttr(input), value);
+    }
   }
 };
 
@@ -126,3 +127,26 @@ export const AUTH_METHOD_MAP = [
   // ENTERPRISE ONLY
   { authType: 'saml', options: LOGIN_DATA.saml },
 ];
+
+export const VISIBLE_MOUNTS = {
+  'userpass/': {
+    description: '',
+    options: {},
+    type: 'userpass',
+  },
+  'userpass2/': {
+    description: '',
+    options: {},
+    type: 'userpass',
+  },
+  'my-oidc/': {
+    description: '',
+    options: {},
+    type: 'oidc',
+  },
+  'token/': {
+    description: 'token based credentials',
+    options: null,
+    type: 'token',
+  },
+};
