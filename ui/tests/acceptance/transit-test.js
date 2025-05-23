@@ -13,6 +13,7 @@ import { login } from 'vault/tests/helpers/auth/auth-helpers';
 import { deleteEngineCmd, mountEngineCmd, runCmd } from 'vault/tests/helpers/commands';
 import codemirror from 'vault/tests/helpers/codemirror';
 import { GENERAL } from 'vault/tests/helpers/general-selectors';
+import { SECRET_ENGINE_SELECTORS as SES } from 'vault/tests/helpers/secret-engine/secret-engine-selectors';
 
 const SELECTORS = {
   secretLink: '[data-test-secret-link]',
@@ -20,7 +21,6 @@ const SELECTORS = {
   versionsTab: '[data-test-transit-link="versions"]',
   actionsTab: '[data-test-transit-key-actions-link]',
   card: (action) => `[data-test-transit-card="${action}"]`,
-  infoRow: (label) => `[data-test-value-div="${label}"]`,
   form: (item) => `[data-test-transit-key="${item}"]`,
   versionRow: (version) => `[data-test-transit-version="${version}"]`,
   rotate: {
@@ -229,7 +229,7 @@ module('Acceptance | transit', function (hooks) {
     assert.expect(8);
     const type = 'chacha20-poly1305';
     const name = `test-generate-${this.uid}`;
-    await click('[data-test-secret-create]');
+    await click(SES.createSecretLink);
 
     await fillIn(SELECTORS.form('name'), name);
     await fillIn(SELECTORS.form('type'), type);
@@ -244,10 +244,10 @@ module('Acceptance | transit', function (hooks) {
       `/vault/secrets/${this.path}/show/${name}?tab=details`,
       'it navigates to show page'
     );
-    assert.dom(SELECTORS.infoRow('Auto-rotation period')).hasText('30 days');
-    assert.dom(SELECTORS.infoRow('Deletion allowed')).hasText('false');
-    assert.dom(SELECTORS.infoRow('Derived')).hasText('Yes');
-    assert.dom(SELECTORS.infoRow('Convergent encryption')).hasText('Yes');
+    assert.dom(GENERAL.infoRowValue('Auto-rotation period')).hasText('30 days');
+    assert.dom(GENERAL.infoRowValue('Deletion allowed')).hasText('false');
+    assert.dom(GENERAL.infoRowValue('Derived')).hasText('Yes');
+    assert.dom(GENERAL.infoRowValue('Convergent encryption')).hasText('Yes');
     await click(GENERAL.breadcrumbLink(this.path));
     await click(SELECTORS.popupMenu);
     const actions = findAll('.hds-dropdown__list li');
@@ -345,7 +345,7 @@ module('Acceptance | transit', function (hooks) {
     const name = await this.generateTransitKey(keyData);
     await visit(`vault/secrets/${this.path}/show/${name}`);
     assert
-      .dom(SELECTORS.infoRow('Auto-rotation period'))
+      .dom(GENERAL.infoRowValue('Auto-rotation period'))
       .hasText('30 days', 'Has expected auto rotate value');
 
     await click(SELECTORS.versionsTab);
