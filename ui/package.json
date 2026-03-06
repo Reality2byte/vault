@@ -166,7 +166,7 @@
     "stylelint": "~16.19.1",
     "stylelint-config-standard": "~38.0.0",
     "stylelint-prettier": "~5.0.3",
-    "swagger-ui-dist": "~5.21.0",
+    "swagger-ui-dist": "~5.32.0",
     "text-encoder-lite": "2.0.0",
     "tracked-built-ins": "~3.4.0",
     "typescript": "~5.5.4",
