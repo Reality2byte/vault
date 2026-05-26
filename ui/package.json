@@ -93,7 +93,7 @@
     "d3-shape": "~3.2.0",
     "date-fns": "~2.30.0",
     "date-fns-tz": "~1.3.8",
-    "dompurify": "~3.3.3",
+    "dompurify": "~3.4.0",
     "ember-a11y-testing": "~7.1.2",
     "ember-basic-dropdown": "~8.7.0",
     "ember-cli": "~5.8.0",
@@ -227,7 +227,7 @@
     "ember-auto-import": "2.10.0",
     "handlebars": "4.7.9",
     "posthog-js": "1.236.1",
-    "uuid": "9.0.1"
+    "uuid": "14.0.0"
   },
   "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c",
   "scarfSettings": {
